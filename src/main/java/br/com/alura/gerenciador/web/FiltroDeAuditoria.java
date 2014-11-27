@@ -11,6 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.Response;
 
 @WebFilter(urlPatterns="/*")
 public class FiltroDeAuditoria implements Filter{
@@ -25,32 +27,26 @@ public class FiltroDeAuditoria implements Filter{
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse resp = (HttpServletResponse) response;
 		
-		Cookie cookie = getUsuario(req);
-		String usuario = "<deslogado>";
-		if (cookie != null) {
-			usuario = getUsuario(req).getValue();
-		}
-		
-	
+		String usuario = getUsuario(req, resp);
 		
 		System.out.println("Usuario " + usuario + " acessando a URI " + req.getRequestURI());
 		chain.doFilter(request, response);
 		
 	}
 
-	private Cookie getUsuario(HttpServletRequest req) {
-		Cookie[] cookies = req.getCookies();
-		String usuario = "<deslogado>"; 	
+	private String getUsuario(HttpServletRequest req, HttpServletResponse resp) {
 		
-		if(cookies == null) return null;
+		Cookie cookie = new Cookies(req.getCookies()).buscaUsuarioLogado();
 		
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals("usuario.logado")) {
-				return cookie;
-			}
+		if (cookie != null) {
+			cookie.setMaxAge(10*60);
+			resp.addCookie(cookie);
 		}
-		return null;
+		
+		if(cookie == null) return "<deslogado>";
+		return cookie.getValue();
 	}
 
 	@Override

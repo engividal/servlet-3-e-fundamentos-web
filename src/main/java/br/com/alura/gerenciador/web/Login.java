@@ -35,6 +35,7 @@ public class Login extends HttpServlet {
 		} else {
 			
 			Cookie cookie = new Cookie("usuario.logado", email);
+			cookie.setMaxAge(10*60);
 			resp.addCookie(cookie);
 			
 			PrintWriter writer = resp.getWriter();
