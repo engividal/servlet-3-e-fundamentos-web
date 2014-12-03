@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.Response;
 
+import br.com.alura.gerenciador.Usuario;
+
 @WebFilter(urlPatterns="/*")
 public class FiltroDeAuditoria implements Filter{
 
@@ -37,16 +39,22 @@ public class FiltroDeAuditoria implements Filter{
 	}
 
 	private String getUsuario(HttpServletRequest req, HttpServletResponse resp) {
+	
+		Usuario usuario = (Usuario) req.getSession().getAttribute("usuario.logado");
 		
-		Cookie cookie = new Cookies(req.getCookies()).buscaUsuarioLogado();
+		if(usuario==null) return "deslogado";
+		
+		return usuario.getEmail();
+		/*Cookie cookie = new Cookies(req.getCookies()).buscaUsuarioLogado();
 		
 		if (cookie != null) {
 			cookie.setMaxAge(10*60);
 			resp.addCookie(cookie);
 		}
-		
+		 
 		if(cookie == null) return "<deslogado>";
 		return cookie.getValue();
+*/
 	}
 
 	@Override

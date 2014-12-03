@@ -16,14 +16,19 @@ public class Logout extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		req.getSession().removeAttribute("usuario.logado");
+		//req.getSession().invalidate();        Usado quando quer eliminar toda a sessão
+		
+		/*
 		Cookie cookie = new Cookies(req.getCookies()).buscaUsuarioLogado();
-		PrintWriter writer = resp.getWriter();
+		
 		if(cookie == null){
 			writer.println("<html><body>Usuario nao estava logado!</body></html>");
 			return;
 		}
 		cookie.setMaxAge(0);
-		resp.addCookie(cookie);
+		resp.addCookie(cookie);*/
+		PrintWriter writer = resp.getWriter();
 		writer.println("<html><body>Deslogado com sucesso</body></html>");
 	}
 }
